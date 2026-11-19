@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oman SME Investment Intelligence</title>
+<style>
+:root {
+  --bg:#f7f6f2; --bg2:#edecea; --surface:#ffffff;
+  --border:rgba(0,0,0,0.10); --border2:rgba(0,0,0,0.18);
+  --text:#1a1a18; --text2:#5a5955; --text3:#908f8a;
+  --green:#1a6b3c; --green-bg:#e4f3ec;
+  --blue:#1451a0; --blue-bg:#e6effa;
+  --amber:#8a4e00; --amber-bg:#faeedd;
+  --red:#a02828; --red-bg:#fceaea;
+  --purple:#4a3fb5; --purple-bg:#eeedfe;
+  --teal:#0a6b6b; --teal-bg:#e0f4f4;
+  --oman:#cc2936; /* Oman red */
+  --r:8px; --r2:12px;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#131312; --bg2:#1d1d1c; --surface:#252524;
+  --border:rgba(255,255,255,0.08); --border2:rgba(255,255,255,0.15);
+  --text:#f0efe9; --text2:#9e9d98; --text3:#6a6965;
+  --green-bg:#0d2e1c; --blue-bg:#0b1e38; --amber-bg:#2a1a00;
+  --red-bg:#2a0c0c; --purple-bg:#1a183a; --teal-bg:#051e1e;
+}}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+       background: var(--bg); color: var(--text); font-size: 14px;
+       height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+
+/* ── Config bar ─────────────────────────────────────── */
+#config-bar {
+  display: none;
+}
+#config-bar input {
+  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+  color: #fff; border-radius: 6px; padding: 4px 10px; font-size: 12px; width: 320px;
+}
+#config-bar input::placeholder { color: rgba(255,255,255,0.6); }
+#config-bar button {
+  background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
+  color: #fff; border-radius: 6px; padding: 4px 12px; cursor: pointer; font-size: 12px;
+}
+#config-bar button:hover { background: rgba(255,255,255,0.3); }
+.config-saved { color: #a0f0c0; font-size: 11px; }
+
+/* ── Header ─────────────────────────────────────────── */
+header {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 16px 24px; display: flex; align-items: center; justify-content: space-between;
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-flag { font-size: 24px; }
+.logo h1 { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+.logo p  { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.header-actions { display: flex; gap: 8px; align-items: center; }
+
+/* ── KPI strip ──────────────────────────────────────── */
+#kpi-strip {
+  display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px;
+  background: var(--border); border-bottom: 1px solid var(--border);
+}
+.kpi {
+  background: var(--surface); padding: 14px 16px; text-align: center;
+}
+.kpi-val { font-size: 22px; font-weight: 700; line-height: 1; }
+.kpi-lbl { font-size: 10px; color: var(--text3); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
+.kpi-green { color: var(--green); }
+.kpi-blue  { color: var(--blue);  }
+.kpi-amber { color: var(--amber); }
+.kpi-oman  { color: var(--oman);  }
+
+/* ── Main layout ────────────────────────────────────── */
+#main { display: flex; flex: 1; min-height: 0; overflow: hidden; }
+
+/* ── Sidebar ────────────────────────────────────────── */
+#sidebar {
+  width: 240px; flex-shrink: 0; background: var(--surface);
+  border-right: 1px solid var(--border); overflow-y: auto;
+  display: flex; flex-direction: column; gap: 0;
+}
+.sidebar-section { border-bottom: 1px solid var(--border); }
+.sidebar-title {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase;
+  color: var(--text3); padding: 12px 16px 6px;
+}
+.filter-btn {
+  width: 100%; padding: 7px 16px; border: none; background: none;
+  text-align: left; cursor: pointer; font-size: 13px; color: var(--text2);
+  display: flex; justify-content: space-between; align-items: center;
+  border-radius: 0;
+}
+.filter-btn:hover { background: var(--bg); color: var(--text); }
+.filter-btn.active { background: var(--blue-bg); color: var(--blue); font-weight: 600; }
+.filter-count {
+  font-size: 10px; background: var(--bg2); color: var(--text3);
+  border-radius: 10px; padding: 1px 6px; min-width: 20px; text-align: center;
+}
+.filter-btn.active .filter-count { background: var(--blue); color: #fff; }
+
+.scraper-btn {
+  width: 100%; padding: 6px 16px; border: none; background: none;
+  text-align: left; cursor: pointer; font-size: 12px; color: var(--text2);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.scraper-btn:hover { background: var(--bg); color: var(--text); }
+.run-all-btn {
+  margin: 8px 16px 12px; padding: 7px 12px;
+  background: var(--oman); color: #fff; border: none; border-radius: var(--r);
+  font-size: 12px; font-weight: 600; cursor: pointer; width: calc(100% - 32px);
+}
+.run-all-btn:hover { opacity: 0.9; }
+
+.status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+.dot-green  { background: #22c55e; }
+.dot-amber  { background: #f59e0b; }
+.dot-red    { background: #ef4444; }
+.dot-grey   { background: #9ca3af; }
+
+/* ── Content area ───────────────────────────────────── */
+#content { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
+
+/* ── Toolbar ─────────────────────────────────────────── */
+#toolbar {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 10px 16px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  flex-shrink: 0; z-index: 10;
+}
+#toolbar input[type="text"] {
+  border: 1px solid var(--border2); border-radius: var(--r);
+  padding: 6px 10px; font-size: 13px; background: var(--bg);
+  color: var(--text); width: 220px;
+}
+.tb-select {
+  border: 1px solid var(--border2); border-radius: var(--r);
+  padding: 5px 8px; font-size: 12px; background: var(--bg); color: var(--text); cursor: pointer;
+}
+.tb-btn {
+  padding: 6px 12px; border-radius: var(--r); border: 1px solid var(--border2);
+  font-size: 12px; cursor: pointer; background: var(--surface); color: var(--text);
+}
+.tb-btn:hover { background: var(--bg2); }
+.tb-btn-primary {
+  background: var(--blue); color: #fff; border-color: var(--blue);
+}
+.tb-btn-primary:hover { opacity: 0.9; }
+.tb-btn-green { background: var(--green); color: #fff; border-color: var(--green); }
+.result-count { font-size: 12px; color: var(--text3); margin-left: auto; }
+
+/* ── Table ──────────────────────────────────────────── */
+#table-wrap { overflow-y: auto; overflow-x: auto; flex: 1; min-height: 0; }
+table {
+  width: 100%; border-collapse: collapse; font-size: 12.5px;
+}
+th {
+  background: var(--bg2); color: var(--text3); font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  padding: 8px 12px; text-align: left; position: sticky; top: 0;
+  border-bottom: 1px solid var(--border); white-space: nowrap; z-index: 9;
+}
+td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tr:hover td { background: var(--bg); }
+tr.flagged td { background: rgba(204,41,54,0.04); }
+
+.company-name { font-weight: 600; color: var(--text); max-width: 200px; }
+.company-sub  { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+/* ── Badges ─────────────────────────────────────────── */
+.badge {
+  display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 7px;
+  border-radius: 20px; white-space: nowrap;
+}
+.badge-green  { background: var(--green-bg);  color: var(--green);  }
+.badge-red    { background: var(--red-bg);    color: var(--red);    }
+.badge-amber  { background: var(--amber-bg);  color: var(--amber);  }
+.badge-blue   { background: var(--blue-bg);   color: var(--blue);   }
+.badge-purple { background: var(--purple-bg); color: var(--purple); }
+.badge-teal   { background: var(--teal-bg);   color: var(--teal);   }
+.badge-grey   { background: var(--bg2);       color: var(--text3);  }
+
+/* ── Score badge ─────────────────────────────────────── */
+.score-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 50%;
+  font-weight: 700; font-size: 13px; border: 2px solid currentColor;
+}
+
+/* ── Card grid ───────────────────────────────────────── */
+#card-grid {
+  display: none; padding: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+#card-grid.active { display: grid; }
+.sme-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r2); padding: 16px; cursor: pointer;
+  transition: box-shadow 0.15s, border-color 0.15s; position: relative;
+}
+.sme-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-color: var(--border2); }
+.sme-card.selected { border-color: var(--blue); box-shadow: 0 0 0 2px var(--blue-bg); }
+.sme-card.flagged  { border-left: 3px solid var(--oman); }
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
+.card-name   { font-weight: 700; font-size: 13px; line-height: 1.3; flex: 1; }
+.card-sub    { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.card-body   { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+.card-row    { display: flex; justify-content: space-between; font-size: 11px; color: var(--text2); border-top: 1px solid var(--border); padding-top: 8px; margin-top: 4px; }
+.card-check  { position: absolute; top: 10px; right: 10px; width: 16px; height: 16px; cursor: pointer; }
+
+/* ── Row checkbox ────────────────────────────────────── */
+.row-check { cursor: pointer; width: 15px; height: 15px; }
+
+/* ── Selection bar ───────────────────────────────────── */
+#selection-bar {
+  display: none; position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--blue); color: #fff; padding: 10px 20px; border-radius: 24px;
+  font-size: 13px; font-weight: 600; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  z-index: 150; align-items: center; gap: 12px;
+}
+#selection-bar.show { display: flex; }
+#selection-bar button {
+  background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
+  color: #fff; border-radius: 12px; padding: 4px 14px; cursor: pointer; font-size: 12px;
+}
+#selection-bar button:hover { background: rgba(255,255,255,0.35); }
+
+/* ── View toggle ─────────────────────────────────────── */
+.view-toggle { display: flex; gap: 2px; border: 1px solid var(--border2); border-radius: 8px; overflow: hidden; }
+.view-btn {
+  background: none; border: none; padding: 5px 10px; cursor: pointer;
+  color: var(--text3); font-size: 14px; line-height: 1; transition: background 0.15s;
+}
+.view-btn.active { background: var(--bg2); color: var(--text); }
+
+/* ── OIA match chips ─────────────────────────────────── */
+.oia-chips { display: flex; flex-wrap: wrap; gap: 3px; max-width: 180px; }
+.oia-chip  { font-size: 9px; background: var(--teal-bg); color: var(--teal);
+             border-radius: 4px; padding: 1px 5px; font-weight: 600; }
+
+/* ── Pipeline select ─────────────────────────────────── */
+.pipeline-sel {
+  border: none; background: transparent; font-size: 11px; cursor: pointer;
+  color: var(--text2); font-family: inherit; padding: 0;
+}
+.pipeline-sel:focus { outline: none; }
+
+/* ── Action buttons in table ─────────────────────────── */
+.action-btn {
+  font-size: 10px; padding: 3px 8px; border-radius: 5px; border: 1px solid var(--border2);
+  cursor: pointer; background: var(--surface); color: var(--text2);
+}
+.action-btn:hover { background: var(--bg2); }
+.action-btn-enrich { background: var(--blue); color: #fff; border-color: var(--blue); }
+.flagged-btn { background: #22c55e1a; border-color: #22c55e; filter: hue-rotate(100deg) saturate(3) brightness(1.1); }
+
+/* ── Detail panel ────────────────────────────────────── */
+#detail-panel {
+  position: fixed; right: 0; top: 0; bottom: 0; width: 420px;
+  background: var(--surface); border-left: 1px solid var(--border2);
+  box-shadow: -8px 0 30px rgba(0,0,0,0.1); z-index: 100;
+  overflow-y: auto; display: none; flex-direction: column;
+}
+#detail-panel.open { display: flex; }
+.panel-header {
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: flex-start;
+  position: sticky; top: 0; background: var(--surface); z-index: 1;
+}
+.panel-close {
+  background: none; border: none; font-size: 18px; cursor: pointer;
+  color: var(--text3); line-height: 1; padding: 2px;
+}
+.panel-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.panel-section { }
+.panel-section-title {
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;
+  color: var(--text3); margin-bottom: 8px;
+}
+.panel-field { margin-bottom: 6px; }
+.panel-label { font-size: 10px; color: var(--text3); margin-bottom: 2px; }
+.panel-value { font-size: 13px; color: var(--text); }
+.panel-notes textarea {
+  width: 100%; border: 1px solid var(--border2); border-radius: var(--r);
+  padding: 8px; font-size: 12px; background: var(--bg); color: var(--text);
+  min-height: 80px; font-family: inherit; resize: vertical;
+}
+.panel-notes button {
+  margin-top: 6px; padding: 5px 12px; background: var(--green); color: #fff;
+  border: none; border-radius: var(--r); cursor: pointer; font-size: 12px;
+}
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+/* ── Loading / empty ─────────────────────────────────── */
+#loading, #empty {
+  text-align: center; padding: 60px 20px; color: var(--text3);
+}
+.spinner {
+  width: 28px; height: 28px; border: 3px solid var(--border2);
+  border-top-color: var(--oman); border-radius: 50%;
+  animation: spin 0.8s linear infinite; margin: 0 auto 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Toast ─────────────────────────────────────────────── */
+#toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: #1a1a18; color: #fff; padding: 9px 18px; border-radius: 20px;
+  font-size: 13px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 200;
+}
+#toast.show { opacity: 1; }
+
+/* ── Mobile responsive ───────────────────────────────────── */
+#sidebar-toggle {
+  display: none; background: none; border: none; cursor: pointer;
+  font-size: 20px; color: var(--text); padding: 2px 6px; line-height: 1;
+  flex-shrink: 0;
+}
+#sidebar-backdrop {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+  z-index: 50;
+}
+#sidebar-backdrop.show { display: block; }
+
+@media (max-width: 768px) {
+  /* Header */
+  header { padding: 10px 14px; }
+  .logo h1 { font-size: 14px; }
+  .logo p  { display: none; }
+  .logo-flag { font-size: 20px; }
+  #sidebar-toggle { display: block; }
+  .header-actions { gap: 4px; }
+  .header-actions .tb-btn { padding: 5px 8px; font-size: 18px; line-height: 1; }
+  .header-actions .tb-btn .btn-label { display: none; }
+
+  /* KPI strip: 3 cols */
+  #kpi-strip { grid-template-columns: repeat(3, 1fr); }
+  .kpi { padding: 10px 8px; }
+  .kpi-val { font-size: 18px; }
+  .kpi-lbl { font-size: 9px; }
+
+  /* Sidebar: slide-in drawer */
+  #sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0; z-index: 60;
+    width: 260px; transform: translateX(-100%);
+    transition: transform 0.25s ease; box-shadow: 4px 0 20px rgba(0,0,0,0.2);
+  }
+  #sidebar.open { transform: translateX(0); }
+
+  /* Content full width */
+  #content { width: 100%; }
+
+  /* Toolbar: wrap, full-width search */
+  #toolbar { padding: 8px 10px; gap: 6px; }
+  #toolbar input[type="text"] { width: 100%; flex: 1 1 100%; order: -1; }
+  .tb-select { font-size: 11px; padding: 5px 6px; }
+  .result-count { display: none; }
+
+  /* Table: horizontal scroll, hide non-essential cols */
+  #table-wrap { -webkit-overflow-scrolling: touch; }
+  table { font-size: 11.5px; }
+  th, td { padding: 8px 8px; }
+  /* hide JSRS cert no, sector on mobile */
+  th:nth-child(3), td:nth-child(3),
+  th:nth-child(6), td:nth-child(6) { display: none; }
+
+  /* Detail panel: full screen */
+  #detail-panel { width: 100% !important; }
+
+  /* Glossary modal: full screen */
+  #glossary-modal { width: 100%; max-width: 100%; max-height: 100vh; border-radius: 0; }
+
+  /* Selection bar */
+  #selection-bar { width: 90%; font-size: 12px; padding: 8px 14px; }
+}
+
+@media (max-width: 420px) {
+  #kpi-strip { grid-template-columns: repeat(2, 1fr); }
+  .kpi-lbl { font-size: 8px; letter-spacing: 0; }
+}
+
+/* ── Contracts list in panel ─────────────────────────────── */
+.contract-row {
+  border: 1px solid var(--border); border-radius: var(--r);
+  padding: 8px 10px; margin-bottom: 6px; font-size: 11px;
+}
+.contract-row:last-child { margin-bottom: 0; }
+.contract-title { font-weight: 600; color: var(--text); margin-bottom: 4px; line-height: 1.4; }
+.contract-meta  { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; color: var(--text3); }
+.contract-omr   { font-weight: 700; color: var(--green); font-size: 12px; }
+.contract-buyer { background: var(--blue-bg); color: var(--blue); border-radius: 4px; padding: 1px 6px; font-size: 10px; font-weight: 600; }
+.contract-date  { font-size: 10px; color: var(--text3); }
+.contract-ref   { font-size: 10px; color: var(--text3); font-family: monospace; }
+
+/* ── Glossary modal ──────────────────────────────────────── */
+#glossary-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+  z-index: 300; align-items: center; justify-content: center;
+}
+#glossary-overlay.open { display: flex; }
+#glossary-modal {
+  background: var(--surface); border-radius: var(--r2); width: 680px; max-width: 95vw;
+  max-height: 88vh; display: flex; flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25); border: 1px solid var(--border2);
+}
+.gmodal-header {
+  padding: 18px 22px 14px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.gmodal-header h2 { font-size: 16px; font-weight: 700; }
+.gmodal-header p  { font-size: 12px; color: var(--text3); margin-top: 2px; }
+.gmodal-close {
+  background: none; border: none; font-size: 20px; cursor: pointer;
+  color: var(--text3); line-height: 1; padding: 2px 4px;
+}
+.gmodal-close:hover { color: var(--text); }
+.gmodal-body {
+  overflow-y: auto; padding: 22px;
+  display: flex; flex-direction: column; gap: 24px;
+}
+.gsection-title {
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.9px;
+  color: var(--text3); margin-bottom: 10px;
+}
+.gterm {
+  margin-bottom: 12px;
+}
+.gterm-name {
+  font-weight: 600; font-size: 13px; margin-bottom: 3px;
+}
+.gterm-desc {
+  font-size: 12px; color: var(--text2); line-height: 1.6;
+}
+.gterm-note {
+  font-size: 11px; color: var(--text3); margin-top: 4px; font-style: italic;
+}
+.gtable {
+  width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px;
+}
+.gtable th {
+  background: var(--bg2); color: var(--text3); font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  padding: 6px 10px; text-align: left; position: static;
+  border-bottom: 1px solid var(--border);
+}
+.gtable td { padding: 7px 10px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+.gtable tr:last-child td { border-bottom: none; }
+.gtable td:first-child { font-weight: 600; color: var(--text); white-space: nowrap; }
+.glimit-box {
+  background: var(--amber-bg); border: 1px solid rgba(138,78,0,0.2);
+  border-radius: var(--r); padding: 10px 14px; font-size: 12px; color: var(--amber);
+  line-height: 1.6;
+}
+.ghow-step {
+  display: flex; gap: 12px; align-items: flex-start; margin-bottom: 10px;
+}
+.ghow-num {
+  flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--blue); color: #fff; font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.ghow-text { font-size: 12px; color: var(--text2); line-height: 1.6; }
+.ghow-text strong { color: var(--text); }
+/* Glossary tabs */
+.gtabs {
+  display: flex; gap: 0; border-bottom: 1px solid var(--border);
+  padding: 0 22px; flex-shrink: 0; background: var(--surface);
+}
+.gtab {
+  padding: 10px 14px; font-size: 12px; font-weight: 600; cursor: pointer;
+  color: var(--text3); border-bottom: 2px solid transparent; margin-bottom: -1px;
+  white-space: nowrap;
+}
+.gtab:hover { color: var(--text); }
+.gtab.active { color: var(--blue); border-bottom-color: var(--blue); }
+.gtab-panel { display: none; }
+.gtab-panel.active { display: block; }
+</style>
+</head>
+<body>
+
+<!-- Config Bar -->
+<div id="config-bar">
+  🇴🇲
+  <input type="text" id="worker-url-input" placeholder="Worker URL, or leave empty for demo data" />
+  <input type="password" id="api-token-input" placeholder="API token" style="max-width:160px" />
+  <button onclick="saveConfig()">Save</button>
+  <span id="demo-badge" style="display:none;background:#f59e0b;color:#111;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600">DEMO · synthetic data</span>
+  <span id="config-saved" class="config-saved" style="display:none">✓ Saved</span>
+  <span style="margin-left:auto; opacity:0.7">Oman SME Investment Intelligence v1.0</span>
+</div>
+
+<!-- Sidebar backdrop (mobile) -->
+<div id="sidebar-backdrop" onclick="closeSidebar()"></div>
+
+<!-- Header -->
+<header>
+  <div class="logo">
+    <button id="sidebar-toggle" onclick="toggleSidebar()" title="Toggle filters">☰</button>
+    <span class="logo-flag">🏭</span>
+    <div>
+      <h1>Oman SME Investment Intelligence</h1>
+      <p>JSRS · OIA Protected List · ICV · Vision 2040 · 1M–5M OMR Band
+        <span id="demo-note" style="display:none;margin-left:8px;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600">Demo · synthetic data, not real companies</span></p>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="tb-btn" onclick="document.getElementById('glossary-overlay').classList.add('open')">📖<span class="btn-label"> Glossary</span></button>
+    <button class="tb-btn" onclick="triggerEnrichBatch()">⚡<span class="btn-label"> Enrich Batch</span></button>
+    <button class="tb-btn tb-btn-green" onclick="downloadSelected()">↓<span class="btn-label"> Export CSV</span></button>
+  </div>
+</header>
+
+<!-- KPI Strip -->
+<div id="kpi-strip">
+  <div class="kpi"><div class="kpi-val kpi-oman" id="kpi-total">-</div><div class="kpi-lbl">Total Companies Found</div></div>
+  <div class="kpi"><div class="kpi-val kpi-green" id="kpi-jsrs">-</div><div class="kpi-lbl">JSRS Active</div></div>
+  <div class="kpi"><div class="kpi-val kpi-blue" id="kpi-oia">-</div><div class="kpi-lbl">OIA Code Match</div></div>
+  <div class="kpi"><div class="kpi-val kpi-amber" id="kpi-band">-</div><div class="kpi-lbl">1M–5M OMR Band</div></div>
+  <div class="kpi"><div class="kpi-val kpi-green" id="kpi-ready">-</div><div class="kpi-lbl">Investment Ready</div></div>
+  <div class="kpi"><div class="kpi-val" id="kpi-enriched">-</div><div class="kpi-lbl">Enriched by AI</div></div>
+</div>
+
+<!-- Main -->
+<div id="main">
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <!-- Pipeline filter -->
+    <div class="sidebar-section">
+      <div class="sidebar-title">Pipeline</div>
+      <button class="filter-btn active" onclick="setFilter('pipeline','all',this)">All Companies <span class="filter-count" id="cnt-all">0</span></button>
+      <button class="filter-btn" onclick="setFilter('pipeline','New',this)">🆕 New <span class="filter-count" id="cnt-new">0</span></button>
+      <button class="filter-btn" onclick="setFilter('pipeline','Reviewing',this)">👀 Reviewing <span class="filter-count" id="cnt-reviewing">0</span></button>
+      <button class="filter-btn" onclick="setFilter('pipeline','Watchlist',this)">⭐ Watchlist <span class="filter-count" id="cnt-watchlist">0</span></button>
+      <button class="filter-btn" onclick="setFilter('pipeline','In DD',this)">🔍 In DD <span class="filter-count" id="cnt-dd">0</span></button>
+      <button class="filter-btn" onclick="setFilter('pipeline','Portfolio',this)">✅ Portfolio <span class="filter-count" id="cnt-portfolio">0</span></button>
+      <button class="filter-btn" onclick="setFilter('pipeline','Pass',this)">✗ Pass <span class="filter-count" id="cnt-pass">0</span></button>
+    </div>
+
+    <!-- Smart filters -->
+    <div class="sidebar-section">
+      <div class="sidebar-title">Smart Filters</div>
+      <button class="filter-btn" onclick="setFilter('investment_ready','true',this)">🎯 Investment Ready</button>
+      <button class="filter-btn" onclick="setFilter('jsrs_active','true',this)">✅ JSRS Active Only</button>
+      <button class="filter-btn" onclick="setFilter('oia_match','true',this)">📋 OIA Code Match</button>
+      <button class="filter-btn" onclick="setFilter('icv_certified','true',this)">🏅 ICV Certified</button>
+      <button class="filter-btn" onclick="setFilter('revenue_band','1M–5M',this)">💰 1M–5M OMR Band</button>
+      <button class="filter-btn" onclick="setFilter('flagged','true',this)">🚩 Flagged</button>
+      <button class="filter-btn" onclick="setFilter('enriched','true',this)">⚡ AI Enriched</button>
+    </div>
+
+    <!-- Sector -->
+    <div class="sidebar-section">
+      <div class="sidebar-title">Vision 2040 Sector</div>
+      <button class="filter-btn" onclick="setFilter('sector','Manufacturing',this)">🏭 Manufacturing</button>
+      <button class="filter-btn" onclick="setFilter('sector','Logistics',this)">🚛 Logistics</button>
+      <button class="filter-btn" onclick="setFilter('sector','ICT',this)">💻 ICT</button>
+      <button class="filter-btn" onclick="setFilter('sector','Construction',this)">🏗️ Construction</button>
+      <button class="filter-btn" onclick="setFilter('sector','Healthcare',this)">🏥 Healthcare</button>
+      <button class="filter-btn" onclick="setFilter('sector','Agri-Food',this)">🌾 Agri-Food</button>
+      <button class="filter-btn" onclick="setFilter('sector','Energy',this)">⚡ Energy</button>
+      <button class="filter-btn" onclick="setFilter('sector','Professional Services',this)">📊 Prof. Services</button>
+    </div>
+
+    <!-- Scrapers -->
+    <div class="sidebar-section">
+      <div class="sidebar-title">Data Sources</div>
+      <button class="scraper-btn" id="src-oia_list">📄 OIA List Parser</button>
+      <button class="scraper-btn" id="src-tender_board">🏛️ Tender Board</button>
+      <button class="scraper-btn" id="src-jsrs">✅ JSRS Portal</button>
+      <button class="scraper-btn" id="src-msx">📈 Muscat Stock Exchange</button>
+      <button class="run-all-btn" onclick="triggerAllScrapers()">▶ Run All Scrapers</button>
+    </div>
+
+    <!-- Recent runs -->
+    <div class="sidebar-section" style="padding-bottom:12px">
+      <div class="sidebar-title">Recent Runs</div>
+      <div id="run-log" style="padding: 0 16px; font-size:11px; color:var(--text3)">Loading...</div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div id="content">
+    <div id="toolbar">
+      <input type="text" id="search-box" placeholder="🔍 Search company name..." oninput="debounceSearch()" />
+      <select class="tb-select" id="score-filter" onchange="applyFilters()">
+        <option value="">Any Score</option>
+        <option value="8">Score 8+</option>
+        <option value="6">Score 6+</option>
+        <option value="4">Score 4+</option>
+      </select>
+      <select class="tb-select" id="city-filter" onchange="applyFilters()">
+        <option value="">Any City</option>
+        <option>Muscat</option><option>Sohar</option><option>Salalah</option>
+        <option>Nizwa</option><option>Sur</option><option>Duqm</option>
+      </select>
+      <button class="tb-btn" onclick="resetFilters()">Clear Filters</button>
+      <button class="tb-btn tb-btn-primary" onclick="loadLeads()">↻ Refresh</button>
+      <span class="result-count" id="result-count">-</span>
+      <div class="view-toggle" style="margin-left:auto">
+        <button class="view-btn active" id="btn-list" onclick="setView('list')" title="List view">☰</button>
+        <button class="view-btn" id="btn-cards" onclick="setView('cards')" title="Card view">⊞</button>
+      </div>
+    </div>
+
+    <div id="table-wrap">
+      <div id="loading"><div class="spinner"></div>Loading SMEs...</div>
+      <div id="empty" style="display:none">No companies match the current filters.</div>
+      <table id="sme-table" style="display:none">
+        <thead>
+          <tr>
+            <th style="width:32px"><input type="checkbox" id="select-all" onchange="toggleSelectAll(this)" title="Select all"></th>
+            <th>Company</th>
+            <th>JSRS Status</th>
+            <th>OIA Codes</th>
+            <th>Revenue Band</th>
+            <th>Sector</th>
+            <th>AI Score</th>
+            <th>Pipeline</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+      <div id="card-grid"></div>
+    </div>
+  </div>
+</div>
+
+<div id="selection-bar">
+  <span id="sel-count">0 selected</span>
+  <button onclick="downloadSelected()">↓ Download CSV</button>
+  <button onclick="clearSelection()">✕ Clear</button>
+</div>
+
+<!-- Detail Panel -->
+<div id="detail-panel">
+  <div class="panel-header">
+    <div>
+      <div style="font-size:15px;font-weight:700;" id="panel-name">-</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:2px" id="panel-sub">-</div>
+    </div>
+    <button class="panel-close" onclick="closePanel()">✕</button>
+  </div>
+  <div class="panel-body">
+    <!-- Investment Signal -->
+    <div class="panel-section">
+      <div class="panel-section-title">🎯 Investment Signal</div>
+      <div class="info-grid">
+        <div class="panel-field"><div class="panel-label">AI Score</div><div class="panel-value" id="pd-score">-</div></div>
+        <div class="panel-field"><div class="panel-label">Revenue Band</div><div class="panel-value" id="pd-band">-</div></div>
+        <div class="panel-field"><div class="panel-label">Revenue Confidence</div><div class="panel-value" id="pd-confidence">-</div></div>
+        <div class="panel-field"><div class="panel-label">Tender Awards Total</div><div class="panel-value" id="pd-tender">-</div></div>
+      </div>
+      <div class="panel-field" style="margin-top:8px"><div class="panel-label">AI Summary</div><div class="panel-value" id="pd-summary" style="color:var(--text2)">-</div></div>
+      <div class="panel-field" style="margin-top:6px"><div class="panel-label">Growth Signals</div><div class="panel-value" id="pd-growth" style="color:var(--green)">-</div></div>
+      <div class="panel-field" style="margin-top:6px"><div class="panel-label">Risk Flags</div><div class="panel-value" id="pd-risk" style="color:var(--red)">-</div></div>
+      <div class="panel-field" style="margin-top:12px">
+        <div class="panel-label">Government Contracts Won</div>
+        <div id="pd-contracts" style="margin-top:6px"><span style="color:var(--text3);font-size:12px">Loading…</span></div>
+      </div>
+    </div>
+
+    <!-- Certifications -->
+    <div class="panel-section">
+      <div class="panel-section-title">📋 Certifications & Compliance</div>
+      <div class="info-grid">
+        <div class="panel-field"><div class="panel-label">JSRS Status</div><div class="panel-value" id="pd-jsrs">-</div></div>
+        <div class="panel-field"><div class="panel-label">JSRS Cert No</div><div class="panel-value" id="pd-jsrs-num">-</div></div>
+        <div class="panel-field"><div class="panel-label">OIA Code Match</div><div class="panel-value" id="pd-oia">-</div></div>
+        <div class="panel-field"><div class="panel-label">ICV Certified</div><div class="panel-value" id="pd-icv">-</div></div>
+      </div>
+      <div class="panel-field" style="margin-top:6px"><div class="panel-label">JSRS Categories</div><div class="panel-value" id="pd-jsrs-cats">-</div></div>
+      <div class="panel-field" style="margin-top:6px"><div class="panel-label">Matched OIA Codes</div><div class="panel-value" id="pd-oia-codes">-</div></div>
+    </div>
+
+    <!-- Vision 2040 -->
+    <div class="panel-section">
+      <div class="panel-section-title">🇴🇲 Vision 2040 Alignment</div>
+      <div class="info-grid">
+        <div class="panel-field"><div class="panel-label">Pillar</div><div class="panel-value" id="pd-pillar">-</div></div>
+        <div class="panel-field"><div class="panel-label">Sector</div><div class="panel-value" id="pd-sector">-</div></div>
+      </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="panel-section">
+      <div class="panel-section-title">📞 Contact</div>
+      <div class="info-grid">
+        <div class="panel-field"><div class="panel-label">Email</div><div class="panel-value" id="pd-email">-</div></div>
+        <div class="panel-field"><div class="panel-label">Phone</div><div class="panel-value" id="pd-phone">-</div></div>
+        <div class="panel-field"><div class="panel-label">City</div><div class="panel-value" id="pd-city">-</div></div>
+        <div class="panel-field"><div class="panel-label">CR No</div><div class="panel-value" id="pd-cr">-</div></div>
+      </div>
+      <div class="panel-field" style="margin-top:4px"><div class="panel-label">Links</div>
+        <div id="pd-links" style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap"></div>
+      </div>
+    </div>
+
+    <!-- Pipeline -->
+    <div class="panel-section">
+      <div class="panel-section-title">📊 Pipeline Stage</div>
+      <select id="pd-pipeline-sel" style="width:100%;padding:7px;border:1px solid var(--border2);border-radius:var(--r);background:var(--bg);color:var(--text);font-size:13px;" onchange="updatePipelineFromPanel()">
+        <option>New</option><option>Reviewing</option><option>Watchlist</option>
+        <option>In DD</option><option>Portfolio</option><option>Pass</option>
+      </select>
+    </div>
+
+    <!-- Notes -->
+    <div class="panel-section panel-notes">
+      <div class="panel-section-title">📝 Analyst Notes</div>
+      <textarea id="pd-notes" placeholder="Add investment thesis, concerns, next steps..."></textarea>
+      <button onclick="saveNotes()">Save Notes</button>
+    </div>
+
+    <!-- Actions -->
+    <div class="panel-section">
+      <div style="display:flex;gap:8px;">
+        <button class="tb-btn tb-btn-primary" style="flex:1" onclick="enrichFromPanel()">⚡ Enrich with AI</button>
+        <button class="tb-btn" style="flex:1" id="flag-btn" onclick="toggleFlag()">🚩 Flag</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="sample-data.js"></script>
+<script>
+// ── State ─────────────────────────────────────────────────────
+// With no Worker URL saved, the dashboard runs in demo mode on the
+// synthetic records in sample-data.js (no network calls).
+let WORKER_URL  = localStorage.getItem("oman_worker_url") || "demo";
+let API_TOKEN   = localStorage.getItem("oman_api_token") || "";
+let GITHUB_TOKEN= localStorage.getItem("oman_gh_token") || "";
+let REPO        = localStorage.getItem("oman_repo") || "";
+let allLeads    = [];
+let currentFilters = { pipeline: "all" };
+let currentSME  = null;
+let searchTimer = null;
+let currentView = localStorage.getItem("oman_view") || "list";
+let selectedIds = new Set();
+
+// ── Sidebar toggle (mobile) ────────────────────────────────────
+function toggleSidebar() {
+  const sb = document.getElementById("sidebar");
+  const bd = document.getElementById("sidebar-backdrop");
+  sb.classList.toggle("open");
+  bd.classList.toggle("show");
+}
+function closeSidebar() {
+  document.getElementById("sidebar").classList.remove("open");
+  document.getElementById("sidebar-backdrop").classList.remove("show");
+}
+
+// ── Init ──────────────────────────────────────────────────────
+document.addEventListener("DOMContentLoaded", () => {
+  // Open index.html#setup to show the connection bar (Worker URL + API token).
+  if (location.hash === "#setup") document.getElementById("config-bar").style.display = "flex";
+  if (WORKER_URL !== "demo") document.getElementById("worker-url-input").value = WORKER_URL;
+  document.getElementById("api-token-input").value = API_TOKEN;
+  updateModeBadge();
+  setView(currentView, true);
+  loadLeads(); loadStats(); loadRunLog();
+});
+
+function updateModeBadge() {
+  const demo = WORKER_URL === "demo";
+  document.getElementById("demo-badge").style.display = demo ? "inline" : "none";
+  document.getElementById("demo-note").style.display = demo ? "inline" : "none";
+}
+
+// ── API access: demo mode + auth header ───────────────────────
+// Real mode: every request to the Worker carries "Authorization: Bearer <token>".
+// Demo mode: requests to "demo/..." are answered in the browser from SAMPLE_DATA,
+// mirroring the Worker's /leads, /stats and /tenders routes.
+const _realFetch = window.fetch.bind(window);
+window.fetch = (input, init = {}) => {
+  const url = typeof input === "string" ? input : input.url;
+  if (url.startsWith("demo/")) return Promise.resolve(demoApi(url, init));
+  if (WORKER_URL !== "demo" && url.startsWith(WORKER_URL) && API_TOKEN) {
+    init = { ...init, headers: { ...(init.headers || {}), Authorization: `Bearer ${API_TOKEN}` } };
+  }
+  return _realFetch(input, init);
+};
+
+function demoApi(url, init) {
+  const u = new URL(url, "https://demo.local/");
+  const path = u.pathname.replace(/^\/demo/, "");
+  const q = u.searchParams;
+  const ok = (data) => new Response(JSON.stringify(data), { headers: { "Content-Type": "application/json" } });
+  const D = window.SAMPLE_DATA || { smes: [], tenders: [], runs: [] };
+
+  if (path === "/leads") {
+    let rows = D.smes.slice();
+    if (q.get("jsrs_active") === "true") rows = rows.filter(r => r.jsrs_cert_status === "Active");
+    if (q.get("oia_match") === "true")   rows = rows.filter(r => r.oia_code_match === 1);
+    if (q.get("revenue_band"))           rows = rows.filter(r => r.estimated_revenue_band === q.get("revenue_band"));
+    if (q.get("min_omr"))                rows = rows.filter(r => r.tender_award_total_omr >= +q.get("min_omr"));
+    if (q.get("max_omr"))                rows = rows.filter(r => r.tender_award_total_omr <= +q.get("max_omr"));
+    if (q.get("sector"))                 rows = rows.filter(r => (r.vision2040_sector || "").includes(q.get("sector")));
+    if (q.get("pipeline"))               rows = rows.filter(r => r.pipeline_stage === q.get("pipeline"));
+    if (q.get("min_score"))              rows = rows.filter(r => (r.ai_investment_score || 0) >= +q.get("min_score"));
+    if (q.get("enriched") === "true")    rows = rows.filter(r => r.enriched === 1);
+    if (q.get("flagged") === "true")     rows = rows.filter(r => r.flagged === 1);
+    if (q.get("icv_certified") === "true") rows = rows.filter(r => r.icv_certified === 1);
+    rows.sort((a, b) => b.tender_award_total_omr - a.tender_award_total_omr || b.tender_contract_count - a.tender_contract_count);
+    return ok(rows.slice(0, Math.min(+(q.get("limit") || 100), 500)));
+  }
+  if (path === "/stats") {
+    const n = (f) => [{ n: D.smes.filter(f).length }];
+    const group = (key) => Object.entries(D.smes.reduce((m, r) => (m[r[key]] = (m[r[key]] || 0) + 1, m), {}))
+                             .map(([k, v]) => ({ [key]: k, n: v })).sort((a, b) => b.n - a.n);
+    const scored = D.smes.filter(r => r.ai_investment_score);
+    return ok({
+      total: [{ n: D.smes.length }],
+      jsrs_active: n(r => r.jsrs_cert_status === "Active"),
+      oia_match: n(r => r.oia_code_match === 1),
+      target_band: n(r => r.estimated_revenue_band === "1M–5M"),
+      investment_ready: n(r => r.investment_ready_score !== null),
+      enriched: n(r => r.enriched === 1),
+      by_sector: group("vision2040_sector").slice(0, 8),
+      by_pipeline: group("pipeline_stage"),
+      by_revenue: group("estimated_revenue_band"),
+      avg_score: [{ n: scored.length ? Math.round(10 * scored.reduce((s, r) => s + r.ai_investment_score, 0) / scored.length) / 10 : null }],
+      recent_runs: D.runs,
+    });
+  }
+  if (path === "/tenders") {
+    const name = (q.get("company_name") || "").toLowerCase();
+    return ok(D.tenders.filter(t => t.company_name.toLowerCase() === name)
+                       .sort((a, b) => b.award_date.localeCompare(a.award_date)));
+  }
+  if (path === "/pipeline") {
+    const body = JSON.parse(init.body || "{}");
+    const r = D.smes.find(x => x.id === body.id);
+    if (r) Object.assign(r, body.pipeline_stage ? { pipeline_stage: body.pipeline_stage } : {},
+                            body.flagged !== undefined ? { flagged: body.flagged ? 1 : 0 } : {});
+    return ok({ ok: true });
+  }
+  if (path.startsWith("/enrich")) return ok({ success: 0, failed: 0, total: 0, note: "AI enrichment is disabled in demo mode" });
+  return new Response(JSON.stringify({ error: "Not found" }), { status: 404 });
+}
+
+function saveConfig() {
+  WORKER_URL = document.getElementById("worker-url-input").value.trim().replace(/\/$/, "") || "demo";
+  API_TOKEN  = document.getElementById("api-token-input").value.trim();
+  if (WORKER_URL === "demo") localStorage.removeItem("oman_worker_url");
+  else localStorage.setItem("oman_worker_url", WORKER_URL);
+  localStorage.setItem("oman_api_token", API_TOKEN);
+  updateModeBadge();
+  const saved = document.getElementById("config-saved");
+  saved.style.display = "inline";
+  setTimeout(() => saved.style.display = "none", 2000);
+  loadLeads(); loadStats(); loadRunLog();
+}
+
+// ── Data loading ───────────────────────────────────────────────
+async function loadLeads() {
+  if (!WORKER_URL) return;
+  showLoading(true);
+
+  const params = new URLSearchParams({ limit: 500 });
+  Object.entries(currentFilters).forEach(([k, v]) => {
+    if (k !== "pipeline" || v !== "all") params.set(k, v);
+  });
+  if (currentFilters.pipeline && currentFilters.pipeline !== "all") params.set("pipeline", currentFilters.pipeline);
+
+  const minScore = document.getElementById("score-filter")?.value;
+  if (minScore) params.set("min_score", minScore);
+
+  try {
+    const res = await fetch(`${WORKER_URL}/leads?${params}`);
+    allLeads = await res.json();
+    renderTable(allLeads);
+  } catch (e) {
+    showToast("Failed to load. Check Worker URL.");
+    showLoading(false);
+  }
+}
+
+async function loadStats() {
+  if (!WORKER_URL) return;
+  try {
+    const res = await fetch(`${WORKER_URL}/stats`);
+    const s = await res.json();
+    const scalar = (key) => s[key]?.[0]?.n ?? s[key]?.[0]?.count ?? 0;
+
+    document.getElementById("kpi-total").textContent   = scalar("total") || 0;
+    document.getElementById("kpi-jsrs").textContent    = scalar("jsrs_active") || 0;
+    document.getElementById("kpi-oia").textContent     = scalar("oia_match") || 0;
+    document.getElementById("kpi-band").textContent    = scalar("target_band") || 0;
+    document.getElementById("kpi-ready").textContent   = scalar("investment_ready") || 0;
+    document.getElementById("kpi-enriched").textContent= scalar("enriched") || 0;
+
+    // Pipeline counts
+    const pipeline = s.by_pipeline || [];
+    const pipeMap = {};
+    pipeline.forEach(r => pipeMap[r.pipeline_stage] = r.n);
+    document.getElementById("cnt-all").textContent       = scalar("total");
+    document.getElementById("cnt-new").textContent       = pipeMap["New"] || 0;
+    document.getElementById("cnt-reviewing").textContent = pipeMap["Reviewing"] || 0;
+    document.getElementById("cnt-watchlist").textContent = pipeMap["Watchlist"] || 0;
+    document.getElementById("cnt-dd").textContent        = pipeMap["In DD"] || 0;
+    document.getElementById("cnt-portfolio").textContent = pipeMap["Portfolio"] || 0;
+    document.getElementById("cnt-pass").textContent      = pipeMap["Pass"] || 0;
+  } catch (e) {}
+}
+
+async function loadRunLog() {
+  if (!WORKER_URL) return;
+  try {
+    const res = await fetch(`${WORKER_URL}/stats`);
+    const s   = await res.json();
+    const runs = s.recent_runs || [];
+    const el  = document.getElementById("run-log");
+    if (!runs.length) { el.textContent = "No runs yet"; return; }
+    el.innerHTML = runs.slice(0, 5).map(r => {
+      const dot = r.status === "success" ? "dot-green" : r.status === "running" ? "dot-amber" : "dot-red";
+      const dt  = new Date(r.started_at).toLocaleDateString("en-OM", { month:"short", day:"numeric" });
+      return `<div style="padding:4px 0;display:flex;align-items:center;gap:6px">
+        <span class="status-dot ${dot}"></span>
+        <span>${r.source}</span>
+        <span style="margin-left:auto;color:var(--text3)">${r.leads_new}↑</span>
+      </div>`;
+    }).join("");
+  } catch (e) {}
+}
+
+// ── View toggle ────────────────────────────────────────────────
+function setView(v, silent) {
+  currentView = v;
+  localStorage.setItem("oman_view", v);
+  document.getElementById("btn-list").classList.toggle("active", v === "list");
+  document.getElementById("btn-cards").classList.toggle("active", v === "cards");
+  if (!silent) renderTable(allLeads);
+}
+
+// ── Selection ──────────────────────────────────────────────────
+function toggleSelect(id, checked) {
+  if (checked) selectedIds.add(id); else selectedIds.delete(id);
+  updateSelectionBar();
+}
+
+function toggleSelectAll(cb) {
+  const q    = (document.getElementById("search-box")?.value || "").toLowerCase();
+  const city = document.getElementById("city-filter")?.value || "";
+  const vis  = allLeads.filter(s => {
+    if (q && !s.company_name?.toLowerCase().includes(q)) return false;
+    if (city && s.city !== city) return false;
+    return true;
+  });
+  if (cb.checked) vis.forEach(s => selectedIds.add(s.id));
+  else vis.forEach(s => selectedIds.delete(s.id));
+  renderTable(allLeads);
+  updateSelectionBar();
+}
+
+function clearSelection() {
+  selectedIds.clear();
+  const cb = document.getElementById("select-all");
+  if (cb) cb.checked = false;
+  renderTable(allLeads);
+  updateSelectionBar();
+}
+
+function updateSelectionBar() {
+  const bar = document.getElementById("selection-bar");
+  const cnt = document.getElementById("sel-count");
+  if (selectedIds.size > 0) {
+    bar.classList.add("show");
+    cnt.textContent = `${selectedIds.size} selected`;
+  } else {
+    bar.classList.remove("show");
+  }
+}
+
+// OIA code → description lookup (for analyst-readable CSV)
+const OIA_DESC = {
+  // OIA Protected List - Services
+  "S-01":"General Administration","S-02":"Maintenance Services & Spare Parts",
+  "S-03":"Legal","S-04":"Transportation & Distribution","S-05":"End-to-End Logistics",
+  "S-06":"Non-Destructive Testing","S-07":"Waste Management",
+  "S-08":"Human Capital and Consultancy","S-09":"Value-added Services","S-10":"Media",
+  "S-11":"Architect","S-12":"Communication","S-13":"Training & Development Programs",
+  "S-14":"Warehouse","S-15":"Aviation Services",
+  // OIA Protected List - Products
+  "P-01":"Office Supplies & Uniform","P-02":"Medicine","P-03":"Cables",
+  "P-04":"Sanitary Ware","P-05":"Buses","P-06":"Industrial Paint",
+  "P-07":"General Consumables","P-08":"Pipes and Fittings",
+  "P-09":"Cleaning Products & Chemicals","P-10":"IT Equipment","P-11":"Wooden Pallets",
+  "P-12":"Industrial Chemicals & Gases","P-13":"Animal Feed & Veterinary Products",
+  "P-14":"Gifts","P-15":"HSE Equipment","P-16":"Food & Beverages",
+  "P-17":"Construction Material & Services","P-18":"Agriculture and Fertilizers",
+  "P-19":"Transformers",
+  // Vision 2040 sector codes (from tender enrichment)
+  "C-001":"Construction & Civil Works","C-002":"Dams & Large Infrastructure",
+  "C-003":"Electromechanical & Telecom Contracting","C-004":"Engineering Services",
+  "L-001":"Logistics & Trade","L-002":"Supply & Distribution",
+  "L-003":"Ports & Shipping","L-004":"Aviation Services","L-005":"Railways",
+  "B-001":"Business Services","B-002":"Facilities Management",
+  "D-001":"ICT & Software","D-002":"IT Equipment & Systems","D-003":"Telecommunications",
+  "E-001":"Energy & Utilities","E-002":"Renewable Energy","E-003":"Water & Sanitation",
+  "G-001":"Environment & Sustainability","G-002":"Green Economy","G-003":"Government Services",
+  "H-001":"Healthcare","H-002":"Pharmaceuticals","H-003":"Social Services",
+  "M-001":"Manufacturing","M-002":"Industrial Manufacturing","M-003":"Mining & Quarrying",
+  "P-001":"Professional Services","P-002":"Education & Training",
+  "P-003":"Media & Printing","P-004":"Research & Testing",
+  "R-001":"Real Estate","S-001":"Safety & Security",
+  "T-001":"Tourism & Hospitality","T-002":"Catering & Events",
+  "A-001":"Agriculture & Food","A-002":"Agri-Processing","A-003":"Fisheries & Aquaculture",
+  "F-001":"Financial Services",
+};
+
+function downloadSelected() {
+  const rows = selectedIds.size > 0
+    ? allLeads.filter(s => selectedIds.has(s.id))
+    : allLeads;
+
+  // ── column definitions: [key, header, transform?] ──────────────
+  // Transform functions receive the raw field value and the full row object
+  const COLS = [
+    // ── Identity ──────────────────────────────────────────────────
+    ["company_name",          "Company Name"],
+    ["commercial_reg_no",     "CR Number"],
+    ["governorate",           "Governorate"],
+    ["contact_phone",         "Phone"],
+    ["contact_email",         "Email"],
+    ["website",               "Website"],
+    // ── Registration ──────────────────────────────────────────────
+    ["vendor_category",       "Tender Board Category"],
+    ["company_type",          "Company Type (SME/Local)"],
+    ["vendor_reg_expiry",     "Vendor Reg. Expiry"],
+    // ── OIA & ICV ─────────────────────────────────────────────────
+    ["oia_code_match",        "OIA Code Match",        v => v ? "Yes" : "No"],
+    ["oia_matched_codes",     "OIA Matched Codes",     v => (Array.isArray(v) ? v : []).join(", ")],
+    ["oia_matched_codes",     "OIA Segment Descriptions", v => (Array.isArray(v) ? v : []).map(c => OIA_DESC[c] || c).join(" | ")],
+    ["icv_certified",         "ICV Certified (OIA v4.0)", v => v ? "Yes" : "No"],
+    // ── Revenue ───────────────────────────────────────────────────
+    ["tender_award_total_omr","Total Gov Contracts Won (OMR)", v => v ? Number(v).toLocaleString("en-US", {maximumFractionDigits:0}) : "0"],
+    ["tender_contract_count", "No. of Gov Contracts"],
+    ["estimated_revenue_band","Estimated Revenue Band"],
+    ["revenue_confidence",    "Revenue Confidence"],
+    // ── JSRS ──────────────────────────────────────────────────────
+    ["jsrs_cert_status",      "JSRS Status"],
+    ["jsrs_categories",       "JSRS Categories"],
+    // ── AI Enrichment ─────────────────────────────────────────────
+    ["ai_investment_score",   "AI Investment Score (0–100)"],
+    ["ai_summary",            "AI Company Summary"],
+    ["ai_growth_signals",     "Growth Signals"],
+    ["ai_risk_flags",         "Risk Flags"],
+    // ── Pipeline ──────────────────────────────────────────────────
+    ["pipeline_stage",        "Pipeline Stage"],
+    ["flagged",               "Flagged",               v => v ? "Yes" : "No"],
+    ["analyst_notes",         "Analyst Notes"],
+    // ── Meta ──────────────────────────────────────────────────────
+    ["source",                "Data Source"],
+  ];
+
+  const cell = (v, transform) => {
+    const raw = transform ? transform(v) : v;
+    if (raw === null || raw === undefined) return '""';
+    let s = Array.isArray(raw) ? raw.join(", ") : String(raw);
+    s = s.replace(/\r?\n|\r/g, " ");
+    return `"${s.replace(/"/g, '""')}"`;
+  };
+
+  const BOM      = "﻿";
+  const header   = COLS.map(([, label]) => `"${label}"`).join(",");
+  const dataRows = rows.map(r =>
+    COLS.map(([key,, transform]) => cell(r[key], transform)).join(",")
+  );
+
+  const csv  = BOM + [header, ...dataRows].join("\r\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const a    = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `oman-sme-intel-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+// ── Rendering ──────────────────────────────────────────────────
+function renderTable(leads) {
+  showLoading(false);
+  const table    = document.getElementById("sme-table");
+  const cardGrid = document.getElementById("card-grid");
+  const empty    = document.getElementById("empty");
+
+  const q    = (document.getElementById("search-box")?.value || "").toLowerCase();
+  const city = document.getElementById("city-filter")?.value || "";
+  const filtered = leads.filter(s => {
+    if (q && !s.company_name?.toLowerCase().includes(q)) return false;
+    if (city && s.city !== city) return false;
+    return true;
+  });
+
+  document.getElementById("result-count").textContent = `${filtered.length} companies`;
+
+  if (!filtered.length) {
+    table.style.display = "none"; cardGrid.classList.remove("active");
+    empty.style.display = "block"; return;
+  }
+  empty.style.display = "none";
+
+  if (currentView === "cards") {
+    table.style.display = "none";
+    cardGrid.classList.add("active");
+    cardGrid.innerHTML = filtered.map(s => {
+      const sel = selectedIds.has(s.id);
+      const omrStr = s.tender_award_total_omr ? `OMR ${Number(s.tender_award_total_omr).toLocaleString()}` : "-";
+      return `
+      <div class="sme-card${s.flagged ? ' flagged' : ''}${sel ? ' selected' : ''}" onclick="openPanel(${s.id})">
+        <input type="checkbox" class="card-check" ${sel ? 'checked' : ''}
+          onclick="event.stopPropagation()" onchange="toggleSelect(${s.id}, this.checked)">
+        <div class="card-header">
+          <div>
+            <div class="card-name">${esc(s.company_name)}</div>
+            <div class="card-sub">${esc(s.city||'Oman')}${s.commercial_reg_no ? ` · CR: ${esc(s.commercial_reg_no)}` : ''}</div>
+          </div>
+          <div>${scoreBadge(s.ai_investment_score, s.tender_award_total_omr)}</div>
+        </div>
+        <div class="card-body">
+          ${jsrsBadge(s)}
+          ${oiaCell(s)}
+          ${revBadge(s)}
+          ${s.vision2040_sector ? `<span class="badge badge-teal">${esc(s.vision2040_sector)}</span>` : ''}
+        </div>
+        <div class="card-row">
+          <span>${omrStr} · ${s.tender_contract_count||0} contracts</span>
+          ${s.contact_phone ? `<span>📞 ${esc(s.contact_phone)}</span>` : ''}
+        </div>
+      </div>`;
+    }).join("");
+  } else {
+    cardGrid.classList.remove("active");
+    table.style.display = "table";
+    document.getElementById("table-body").innerHTML = filtered.map(s => `
+      <tr class="${s.flagged ? 'flagged' : ''}" onclick="openPanel(${s.id})">
+        <td onclick="event.stopPropagation()">
+          <input type="checkbox" class="row-check" ${selectedIds.has(s.id) ? 'checked' : ''}
+            onchange="toggleSelect(${s.id}, this.checked)">
+        </td>
+        <td>
+          <div class="company-name">${esc(s.company_name)}</div>
+          <div class="company-sub">${esc(validCat(s)||s.city||'Oman')} · ${s.commercial_reg_no ? `CR: ${esc(s.commercial_reg_no)}` : ''}</div>
+          ${s.contact_phone ? `<div class="company-sub">📞 ${esc(s.contact_phone)}</div>` : ''}
+          ${s.contact_email ? `<div class="company-sub">✉ ${esc(s.contact_email)}</div>` : ''}
+          ${s.website ? `<div class="company-sub"><a href="${esc(s.website)}" target="_blank" onclick="event.stopPropagation()" style="color:var(--blue);text-decoration:none">🌐 ${esc(s.website.replace(/^https?:\/\/(www\.)?/,'').split('/')[0])}</a></div>` : ''}
+        </td>
+        <td>${jsrsBadge(s)}</td>
+        <td>${oiaCell(s)}</td>
+        <td>${revBadge(s)}</td>
+        <td>${s.vision2040_sector ? `<span class="badge badge-teal">${esc(s.vision2040_sector)}</span>` : '<span style="color:var(--text3)">-</span>'}</td>
+        <td>${scoreBadge(s.ai_investment_score, s.tender_award_total_omr)}</td>
+        <td onclick="event.stopPropagation()">
+          <select class="pipeline-sel" onchange="quickPipeline(${s.id}, this.value)">
+            ${['New','Reviewing','Watchlist','In DD','Portfolio','Pass'].map(
+              p => `<option${s.pipeline_stage===p?' selected':''}>${p}</option>`
+            ).join('')}
+          </select>
+        </td>
+        <td onclick="event.stopPropagation()" style="white-space:nowrap">
+          ${!s.enriched ? `<button class="action-btn action-btn-enrich" onclick="enrichOne(${s.id})">⚡</button> ` : ''}
+          <button class="action-btn${s.flagged ? ' flagged-btn' : ''}" onclick="toggleFlagById(${s.id}, ${!s.flagged})" title="${s.flagged ? 'Unflag' : 'Flag'}">🚩</button>
+        </td>
+      </tr>
+    `).join("");
+  }
+}
+
+function validCat(s) {
+  const c = s.vendor_category;
+  if (!c) return null;
+  // Skip column-shifted phone numbers (10+ digits only)
+  if (/^\d{8,}$/.test(c.trim())) return null;
+  return c;
+}
+
+function jsrsBadge(s) {
+  if (!s.jsrs_certified) return '<span class="badge badge-grey">Not Verified</span>';
+  const cls = s.jsrs_cert_status === "Active" ? "badge-green" : "badge-red";
+  return `<span class="badge ${cls}">JSRS ${s.jsrs_cert_status}</span>`;
+}
+
+function oiaCell(s) {
+  const icvBadge = s.icv_certified ? '<span class="badge badge-green" style="font-size:9px;padding:1px 5px;margin-bottom:2px">ICV ✓</span><br>' : '';
+  if (!s.oia_code_match) return icvBadge || '<span style="color:var(--text3)">-</span>';
+  const codes = Array.isArray(s.oia_matched_codes) ? s.oia_matched_codes.slice(0, 3) : [];
+  if (!codes.length) return icvBadge + '<span class="badge badge-teal">OIA ✓</span>';
+  return icvBadge + `<div class="oia-chips">${codes.map(c => `<span class="oia-chip">${esc(c)}</span>`).join("")}${s.oia_match_count > 3 ? `<span class="oia-chip">+${s.oia_match_count-3}</span>` : ''}</div>`;
+}
+
+function normBand(band) {
+  if (!band) return 'Unknown';
+  // Normalize any encoding variant of the en-dash
+  return band.replace(/[–-â€“\x93\x96-]+/g, '–');
+}
+
+function revBadge(s) {
+  const band = normBand(s.estimated_revenue_band);
+  // Also derive from OMR if band is Unknown/garbled
+  let displayBand = band;
+  if (!['1M–5M','5M–20M','Under 1M','Over 20M'].includes(band) && s.tender_award_total_omr) {
+    const omr = s.tender_award_total_omr;
+    displayBand = omr < 1000000 ? 'Under 1M' : omr <= 5000000 ? '1M–5M' : omr <= 20000000 ? '5M–20M' : 'Over 20M';
+  }
+  const map = { "1M–5M":"badge-green", "5M–20M":"badge-blue", "Under 1M":"badge-grey", "Over 20M":"badge-purple" };
+  const cls = map[displayBand] || "badge-grey";
+  return `<span class="badge ${cls}">${esc(displayBand)}</span>`;
+}
+
+function scoreBadge(score, omr) {
+  const val = score || (omr ? Math.min(Math.round((omr / 5000000) * 10), 10) : 0);
+  if (!val) return '<span style="color:var(--text3)">-</span>';
+  const color = val >= 8 ? "#22c55e" : val >= 6 ? "#f59e0b" : val >= 4 ? "#6b7280" : "#ef4444";
+  return `<span class="score-badge" style="color:${color};border-color:${color};background:${color}18">${val}</span>`;
+}
+
+// ── Detail Panel ───────────────────────────────────────────────
+function openPanel(id) {
+  const s = allLeads.find(x => x.id === id);
+  if (!s) return;
+  currentSME = s;
+
+  document.getElementById("panel-name").textContent = s.company_name || "-";
+  document.getElementById("panel-sub").textContent  = `${s.city||''} · ${s.vision2040_sector||''} · Source: ${s.source||''}`;
+
+  // Investment
+  document.getElementById("pd-score").innerHTML     = scoreBadge(s.ai_investment_score, s.tender_award_total_omr);
+  document.getElementById("pd-band").innerHTML      = revBadge(s);
+  document.getElementById("pd-confidence").textContent = s.revenue_confidence || "-";
+  document.getElementById("pd-tender").textContent  = s.tender_award_total_omr ? `OMR ${Number(s.tender_award_total_omr).toLocaleString()}` : "-";
+  document.getElementById("pd-summary").textContent = s.ai_summary || "Not yet enriched.";
+  document.getElementById("pd-growth").textContent  = s.ai_growth_signals || "-";
+  document.getElementById("pd-risk").textContent    = s.ai_risk_flags || "-";
+
+  // Certs
+  document.getElementById("pd-jsrs").innerHTML     = jsrsBadge(s);
+  document.getElementById("pd-jsrs-num").textContent= s.jsrs_cert_number || "-";
+  document.getElementById("pd-oia").innerHTML       = s.oia_code_match
+    ? `<span class="badge badge-blue">${s.oia_match_count} codes matched</span>` : "No match";
+  document.getElementById("pd-icv").innerHTML       = s.icv_certified
+    ? `<span class="badge badge-green">ICV Certified${s.icv_score ? ' · '+s.icv_score+'%' : ''}</span>` : "Unknown";
+  document.getElementById("pd-jsrs-cats").innerHTML = (s.jsrs_categories||[]).map(c =>
+    `<span class="badge badge-grey" style="margin:2px">${esc(c)}</span>`).join("") || "-";
+  document.getElementById("pd-oia-codes").innerHTML = (s.oia_matched_codes||[]).map(c =>
+    `<span class="oia-chip" style="margin:2px">${esc(c)}</span>`).join("") || "-";
+
+  // Vision 2040
+  document.getElementById("pd-pillar").innerHTML = s.vision2040_pillar
+    ? `<span class="badge badge-amber">${esc(s.vision2040_pillar)}</span>` : "-";
+  document.getElementById("pd-sector").innerHTML = s.vision2040_sector
+    ? `<span class="badge badge-teal">${esc(s.vision2040_sector)}</span>` : "-";
+
+  // Contact
+  document.getElementById("pd-email").textContent = s.contact_email || "-";
+  document.getElementById("pd-phone").textContent = s.contact_phone || "-";
+  document.getElementById("pd-city").textContent  = s.city || "-";
+  document.getElementById("pd-cr").textContent    = s.commercial_reg_no || "-";
+  const links = document.getElementById("pd-links");
+  links.innerHTML = "";
+  if (s.website) links.innerHTML += `<a href="${esc(s.website)}" target="_blank" class="action-btn">🌐 Website</a>`;
+  if (s.linkedin_url) links.innerHTML += `<a href="${esc(s.linkedin_url)}" target="_blank" class="action-btn">in LinkedIn</a>`;
+  if (s.city) links.innerHTML += `<a href="https://www.google.com/maps/search/${encodeURIComponent(s.company_name + ' ' + s.city + ' Oman')}" target="_blank" class="action-btn">📍 Map</a>`;
+  if (s.contact_email) links.innerHTML += `<a href="mailto:${esc(s.contact_email)}" class="action-btn">✉ Email</a>`;
+
+  // Pipeline
+  const sel = document.getElementById("pd-pipeline-sel");
+  sel.value = s.pipeline_stage || "New";
+
+  // Notes
+  document.getElementById("pd-notes").value = s.analyst_notes || "";
+
+  // Flag
+  const fb = document.getElementById("flag-btn");
+  fb.textContent = s.flagged ? "🚩 Unflag" : "🚩 Flag";
+  fb.classList.toggle("flagged-btn", !!s.flagged);
+
+  document.getElementById("detail-panel").classList.add("open");
+
+  // Load individual tender contracts
+  loadContracts(s);
+}
+
+async function loadContracts(s) {
+  const el = document.getElementById("pd-contracts");
+  el.innerHTML = `<span style="color:var(--text3);font-size:12px">Loading…</span>`;
+  try {
+    const qs = new URLSearchParams({ company_name: s.company_name });
+    if (s.commercial_reg_no) qs.set("cr", s.commercial_reg_no);
+    const res = await fetch(`${WORKER_URL}/tenders?${qs}`);
+    const rows = await res.json();
+    if (!rows.length) {
+      el.innerHTML = `<span style="color:var(--text3);font-size:12px">No contracts found in Tender Board records.</span>`;
+      return;
+    }
+    el.innerHTML = rows.map(r => {
+      const omr   = r.award_value_omr ? `OMR ${Number(r.award_value_omr).toLocaleString()}` : "-";
+      const date  = r.award_date ? fmtDate(r.award_date) : "Date unknown";
+      const buyer = r.buyer_entity ? esc(r.buyer_entity) : "";
+      const title = r.tender_title ? esc(r.tender_title) : esc(r.tender_ref || "-");
+      return `<div class="contract-row">
+        <div class="contract-title">${title}</div>
+        <div class="contract-meta">
+          <span class="contract-omr">${omr}</span>
+          ${buyer ? `<span class="contract-buyer">${buyer}</span>` : ""}
+          <span class="contract-date">${date}</span>
+          ${r.tender_ref ? `<span class="contract-ref">${esc(r.tender_ref)}</span>` : ""}
+        </div>
+      </div>`;
+    }).join("");
+  } catch(e) {
+    el.innerHTML = `<span style="color:var(--red);font-size:12px">Failed to load contracts.</span>`;
+  }
+}
+
+function closePanel() {
+  document.getElementById("detail-panel").classList.remove("open");
+  currentSME = null;
+}
+
+async function saveNotes() {
+  if (!currentSME) return;
+  const notes = document.getElementById("pd-notes").value;
+  await patch(`/pipeline`, { id: currentSME.id, analyst_notes: notes });
+  const s = allLeads.find(x => x.id === currentSME.id);
+  if (s) s.analyst_notes = notes;
+  showToast("Notes saved ✓");
+}
+
+async function updatePipelineFromPanel() {
+  if (!currentSME) return;
+  const stage = document.getElementById("pd-pipeline-sel").value;
+  await patch(`/pipeline`, { id: currentSME.id, pipeline_stage: stage });
+  const s = allLeads.find(x => x.id === currentSME.id);
+  if (s) s.pipeline_stage = stage;
+  renderTable(allLeads);
+  showToast(`Pipeline → ${stage}`);
+}
+
+async function toggleFlag() {
+  if (!currentSME) return;
+  const newFlag = !currentSME.flagged;
+  await patch(`/pipeline`, { id: currentSME.id, flagged: newFlag });
+  currentSME.flagged = newFlag;
+  const s = allLeads.find(x => x.id === currentSME.id);
+  if (s) s.flagged = newFlag;
+  const fb2 = document.getElementById("flag-btn");
+  fb2.textContent = newFlag ? "🚩 Unflag" : "🚩 Flag";
+  fb2.classList.toggle("flagged-btn", newFlag);
+  renderTable(allLeads);
+  showToast(newFlag ? "Flagged" : "Unflagged");
+}
+
+// ── Actions ────────────────────────────────────────────────────
+async function enrichOne(id) {
+  showToast("Enriching...");
+  await fetch(`${WORKER_URL}/enrich/${id}`, { method: "POST" });
+  showToast("Enriched ✓");
+  loadLeads(); loadStats();
+}
+
+async function enrichFromPanel() {
+  if (!currentSME) return;
+  await enrichOne(currentSME.id);
+}
+
+async function triggerEnrichBatch() {
+  showToast("Enriching batch (up to 30)...");
+  const res  = await fetch(`${WORKER_URL}/enrich/batch`, { method: "POST" });
+  const data = await res.json();
+  showToast(`Enriched ${data.success} companies ✓`);
+  loadLeads(); loadStats();
+}
+
+async function quickPipeline(id, stage) {
+  await patch(`/pipeline`, { id, pipeline_stage: stage });
+  const s = allLeads.find(x => x.id === id);
+  if (s) s.pipeline_stage = stage;
+}
+
+async function toggleFlagById(id, flagged) {
+  await patch(`/pipeline`, { id, flagged });
+  const s = allLeads.find(x => x.id === id);
+  if (s) s.flagged = flagged;
+  renderTable(allLeads);
+}
+
+async function exportCSV() {
+  if (!WORKER_URL) return;
+  let blob;
+  if (WORKER_URL === "demo") {
+    const cols = ["company_name", "city", "vision2040_sector", "estimated_revenue_band",
+                  "tender_award_total_omr", "tender_contract_count", "oia_code_match", "ai_investment_score"];
+    const esc = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    const lines = [cols.join(","), ...allLeads.map(r => cols.map(c => esc(r[c])).join(","))];
+    blob = new Blob([lines.join("\n")], { type: "text/csv" });
+  } else {
+    const res = await fetch(`${WORKER_URL}/export`);
+    if (!res.ok) { showToast("Export failed. Check the API token."); return; }
+    blob = await res.blob();
+  }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "oman_sme_leads.csv";
+  a.click();
+}
+
+async function triggerAllScrapers() {
+  showToast("Triggering scrapers via GitHub Actions...");
+  // If GitHub token is set, trigger workflow_dispatch
+  if (GITHUB_TOKEN && REPO) {
+    try {
+      await fetch(`https://api.github.com/repos/${REPO}/actions/workflows/scrape.yml/dispatches`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${GITHUB_TOKEN}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ ref: "main", inputs: { sources: "all" } }),
+      });
+      showToast("Scrapers triggered via GitHub Actions ✓");
+    } catch (e) { showToast("Set REPO & token to trigger remotely"); }
+  } else {
+    showToast("Add GitHub token in settings to trigger scrapers remotely");
+  }
+}
+
+async function patch(path, body) {
+  return fetch(`${WORKER_URL}${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
+
+// ── Filters ────────────────────────────────────────────────────
+function setFilter(key, value, btn) {
+  document.querySelectorAll(`.filter-btn`).forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  currentFilters = { [key]: value };
+  if (window.innerWidth <= 768) closeSidebar();
+  loadLeads();
+}
+
+function applyFilters() { renderTable(allLeads); }
+
+function resetFilters() {
+  currentFilters = { pipeline: "all" };
+  document.getElementById("search-box").value = "";
+  document.getElementById("score-filter").value = "";
+  document.getElementById("city-filter").value  = "";
+  document.querySelectorAll(".filter-btn").forEach((b,i) => b.classList.toggle("active", i === 0));
+  loadLeads();
+}
+
+function debounceSearch() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => renderTable(allLeads), 300);
+}
+
+// ── Helpers ────────────────────────────────────────────────────
+function showLoading(show) {
+  document.getElementById("loading").style.display = show ? "block" : "none";
+  if (show) {
+    document.getElementById("sme-table").style.display = "none";
+    document.getElementById("card-grid").classList.remove("active");
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 3000);
+}
+
+function esc(str) {
+  return String(str || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function fmtDate(val) {
+  if (!val) return "";
+  const s = String(val).slice(0, 10); // handles ISO "2024-05-07" or "07-05-2024 ..."
+  const d = new Date(s + "T00:00:00");
+  if (isNaN(d)) return s;
+  return d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+}
+
+function gTab(el, panelId) {
+  document.querySelectorAll(".gtab").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".gtab-panel").forEach(p => p.classList.remove("active"));
+  el.classList.add("active");
+  document.getElementById(panelId).classList.add("active");
+}
+</script>
+
+<!-- Glossary Modal -->
+<div id="glossary-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div id="glossary-modal">
+    <div class="gmodal-header">
+      <div>
+        <h2>📖 Glossary &amp; Reference</h2>
+        <p>Oman SME Investment Intelligence - reference guide</p>
+      </div>
+      <button class="gmodal-close" onclick="document.getElementById('glossary-overlay').classList.remove('open')">✕</button>
+    </div>
+    <div class="gtabs">
+      <div class="gtab active" onclick="gTab(this,'gtab-oia')">OIA Codes</div>
+      <div class="gtab" onclick="gTab(this,'gtab-howto')">How to Use</div>
+      <div class="gtab" onclick="gTab(this,'gtab-terms')">Key Terms</div>
+      <div class="gtab" onclick="gTab(this,'gtab-revenue')">Revenue Proxy</div>
+    </div>
+    <div class="gmodal-body">
+
+      <!-- OIA Codes Tab (default active) -->
+      <div id="gtab-oia" class="gtab-panel active">
+        <div class="gsection-title">OIA Mandatory List v4.0 - Code Reference</div>
+        <div class="gterm-desc" style="margin-bottom:12px">The Oman Investment Authority Mandatory List (Version 4.0, Dec 2025) defines <strong>384 products &amp; services</strong> reserved for local Omani SMEs in government procurement. Companies registered in these categories are marked <strong>ICV Certified</strong>. The list spans 34 segments: 15 service categories (S-01–S-15) and 19 product categories (P-01–P-19).</div>
+
+        <div style="font-weight:600;font-size:12px;color:var(--text2);margin:10px 0 6px">Services (S-01 to S-15)</div>
+        <table class="gtable" style="margin-bottom:14px">
+          <thead><tr><th>Code</th><th>Segment</th><th>Sector</th></tr></thead>
+          <tbody>
+            <tr><td><span class="oia-chip" style="font-size:10px">S-01</span></td><td>General Administration</td><td>Administration &amp; Office</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">S-02</span></td><td>Maintenance Services &amp; Spare Parts</td><td>Engineering &amp; Maintenance</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">S-03</span></td><td>Legal</td><td>Professional Services</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">S-04</span></td><td>Transportation &amp; Distribution</td><td>Logistics &amp; Trade</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">S-05</span></td><td>End-to-End Logistics</td><td>Logistics &amp; Trade</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">S-06</span></td><td>Non-Destructive Testing</td><td>Engineering &amp; Maintenance</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">S-07</span></td><td>Waste Management</td><td>Environment &amp; Utilities</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">S-08</span></td><td>Human Capital and Consultancy</td><td>Professional Services</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">S-09</span></td><td>Value-added Services</td><td>Technology &amp; Innovation</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">S-10</span></td><td>Media</td><td>Media &amp; Communications</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">S-11</span></td><td>Architect</td><td>Construction &amp; Infrastructure</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">S-12</span></td><td>Communication</td><td>Technology &amp; Innovation</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">S-13</span></td><td>Training &amp; Development Programs</td><td>Professional Services</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">S-14</span></td><td>Warehouse</td><td>Logistics &amp; Trade</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">S-15</span></td><td>Aviation Services</td><td>Transport &amp; Aviation</td></tr>
+          </tbody>
+        </table>
+
+        <div style="font-weight:600;font-size:12px;color:var(--text2);margin:10px 0 6px">Products (P-01 to P-19)</div>
+        <table class="gtable" style="margin-bottom:14px">
+          <thead><tr><th>Code</th><th>Segment</th><th>Sector</th></tr></thead>
+          <tbody>
+            <tr><td><span class="oia-chip" style="font-size:10px">P-01</span></td><td>Office Supplies &amp; Uniform</td><td>Administration &amp; Office</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">P-02</span></td><td>Medicine</td><td>Healthcare &amp; Pharmaceuticals</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">P-03</span></td><td>Cables</td><td>Electrical &amp; Electronics</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">P-04</span></td><td>Sanitary Ware</td><td>Construction &amp; Infrastructure</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">P-05</span></td><td>Buses</td><td>Transport &amp; Aviation</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">P-06</span></td><td>Industrial Paint</td><td>Industrial &amp; Manufacturing</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">P-07</span></td><td>General Consumables</td><td>Administration &amp; Office</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">P-08</span></td><td>Pipes and Fittings</td><td>Construction &amp; Infrastructure</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">P-09</span></td><td>Cleaning Products &amp; Chemicals</td><td>Environment &amp; Utilities</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">P-10</span></td><td>IT Equipment</td><td>Technology &amp; Innovation</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">P-11</span></td><td>Wooden Pallets</td><td>Logistics &amp; Trade</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">P-12</span></td><td>Industrial Chemicals &amp; Gases</td><td>Industrial &amp; Manufacturing</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">P-13</span></td><td>Animal Feed &amp; Veterinary Products</td><td>Agriculture &amp; Food</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">P-14</span></td><td>Gifts</td><td>Administration &amp; Office</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">P-15</span></td><td>HSE Equipment</td><td>Industrial &amp; Manufacturing</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">P-16</span></td><td>Food &amp; Beverages</td><td>Agriculture &amp; Food</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">P-17</span></td><td>Construction Material &amp; Services</td><td>Construction &amp; Infrastructure</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">P-18</span></td><td>Agriculture and Fertilizers</td><td>Agriculture &amp; Food</td></tr>
+            <tr><td><span class="oia-chip" style="font-size:10px">P-19</span></td><td>Transformers</td><td>Electrical &amp; Electronics</td></tr>
+          </tbody>
+        </table>
+
+        <div style="font-weight:600;font-size:12px;color:var(--text2);margin:10px 0 6px">Vendor Category → OIA Code Mapping</div>
+        <table class="gtable">
+          <thead><tr><th>Tender Board Category</th><th>Matched OIA Codes</th><th>ICV Eligible</th></tr></thead>
+          <tbody>
+            <tr><td>Construction and Maintenance</td><td>S-02, S-11, P-17</td><td><span class="badge badge-green">Yes</span></td></tr>
+            <tr><td>Construction of Ports Roads Bridges Railways Dams and Maintenance</td><td>P-17, S-02, P-08</td><td><span class="badge badge-green">Yes</span></td></tr>
+            <tr><td>Pipeline Network Construction and Drilling Wells</td><td>P-08, P-17, S-02</td><td><span class="badge badge-green">Yes</span></td></tr>
+            <tr><td>Electromechanical and Telecom Contracting and Maintenance</td><td>S-12, S-02, P-03</td><td><span class="badge badge-green">Yes</span></td></tr>
+            <tr><td>Information Technology Services</td><td>P-10, S-09, S-12</td><td><span class="badge badge-green">Yes</span></td></tr>
+            <tr><td>Consulting Offices</td><td>S-08, S-01, S-03</td><td><span class="badge badge-green">Yes</span></td></tr>
+            <tr><td>Supply</td><td>P-01, P-07, P-09, P-15</td><td><span class="badge badge-green">Yes</span></td></tr>
+            <tr><td>Services</td><td>S-01, S-07, S-08, S-09</td><td><span class="badge badge-green">Yes</span></td></tr>
+            <tr><td>Training (Old)</td><td>S-13</td><td><span class="badge badge-green">Yes</span></td></tr>
+            <tr><td>Consultancy (Old)</td><td>S-08, S-03</td><td><span class="badge badge-green">Yes</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- How to Use Tab -->
+      <div id="gtab-howto" class="gtab-panel">
+        <div class="gsection-title">How to Use This Tool</div>
+        <div class="ghow-step">
+          <div class="ghow-num">1</div>
+          <div class="ghow-text"><strong>Use the sidebar filters</strong> to narrow by pipeline stage, sector, or smart filters like "Investment Ready", "OIA Code Match", or "ICV Certified".</div>
+        </div>
+        <div class="ghow-step">
+          <div class="ghow-num">2</div>
+          <div class="ghow-text"><strong>Sort columns</strong> by clicking any table header. Click a company row to open the detail panel - it shows full enrichment data plus every government contract won, with date, OMR value, and the awarding entity.</div>
+        </div>
+        <div class="ghow-step">
+          <div class="ghow-num">3</div>
+          <div class="ghow-text"><strong>Flag companies</strong> with 🚩 to track them. Use the Pipeline dropdown in the detail panel to move a company through stages (Reviewing → In DD → Portfolio).</div>
+        </div>
+        <div class="ghow-step">
+          <div class="ghow-num">4</div>
+          <div class="ghow-text"><strong>Run ⚡ Enrich Batch</strong> to trigger AI enrichment on unenriched companies. Use ↓ Export CSV to export your filtered view or selection.</div>
+        </div>
+      </div>
+
+      <!-- Key Terms Tab -->
+      <div id="gtab-terms" class="gtab-panel">
+        <div class="gsection-title">Key Terms</div>
+        <div class="gterm">
+          <div class="gterm-name">Investment Ready Score (0–100)</div>
+          <div class="gterm-desc">Composite score weighing four signals: revenue band fit (35 pts), OIA code alignment (30 pts), contract recency within 24 months (20 pts), and award frequency (15 pts). Only companies with ≥ 2 contracts qualify.</div>
+        </div>
+        <div class="gterm">
+          <div class="gterm-name">ICV Certified</div>
+          <div class="gterm-desc">In-Country Value certification. Companies whose registered vendor category appears on the OIA Mandatory List v4.0 are marked ICV Certified - they supply goods or services that must be procured locally under Oman's procurement rules.</div>
+        </div>
+        <div class="gterm">
+          <div class="gterm-name">OIA Code Match</div>
+          <div class="gterm-desc">The Oman Investment Authority publishes 384 protected activity codes (34 segments) - categories reserved for Omani SMEs in government procurement. Matched codes (e.g. S-02, P-17) are shown as chips on each company row.</div>
+        </div>
+        <div class="gterm">
+          <div class="gterm-name">JSRS Active</div>
+          <div class="gterm-desc">Jiha Specification and Registration System - Oman's certified supplier registry. JSRS-active companies meet minimum financial thresholds and are pre-qualified for government procurement.</div>
+        </div>
+        <div class="gterm">
+          <div class="gterm-name">1M–5M OMR Band</div>
+          <div class="gterm-desc">The investment sweet spot: large enough to be a real business, small enough to be acquirable, and below the threshold where PE funds compete.</div>
+        </div>
+        <div class="gterm">
+          <div class="gterm-name">Revenue Confidence</div>
+          <div class="gterm-desc">High = 5+ contracts, Medium = 2–4 contracts, Low = 1 contract. Prefer High-confidence companies - a single large contract may be a one-off.</div>
+        </div>
+      </div>
+
+      <!-- Revenue Proxy Tab -->
+      <div id="gtab-revenue" class="gtab-panel">
+        <div class="gsection-title">Turnover Proxy - How Revenue Is Estimated</div>
+        <div class="gterm-desc" style="margin-bottom:12px">Private Oman SMEs publish no financial statements. There is no public revenue data. The only reliable public signal is the <strong>Tender Board</strong>: every government contract awarded since 2019 is listed with the winning company and value in OMR. We use <strong>total OMR awarded across all government contracts</strong> as a stand-in for turnover.</div>
+
+        <div class="gterm-desc" style="margin-bottom:12px">This works because: (1) government contracts dominate SME revenue in Oman - ministries and state entities are the largest buyers; (2) the OIA 384 protected codes specifically cover categories that must be procured locally, so target companies are disproportionately government-facing; (3) multiple contracts over multiple years flatten one-off spikes.</div>
+
+        <table class="gtable">
+          <thead><tr><th>Field</th><th>What it captures</th></tr></thead>
+          <tbody>
+            <tr><td>Tender Total OMR</td><td>Sum of all contract values won since 2019</td></tr>
+            <tr><td>Contract Count</td><td>Number of distinct contracts won</td></tr>
+            <tr><td>Revenue Band</td><td>Bucketed range: Under 1M / 1M–5M / 5M–20M / Over 20M (tender total ÷ 0.30 proxy)</td></tr>
+            <tr><td>Revenue Confidence</td><td>High (5+ contracts), Medium (2–4), Low (1)</td></tr>
+          </tbody>
+        </table>
+
+        <div class="glimit-box" style="margin-top:12px">
+          <strong>Limitations:</strong> Captures government contracts only - private-sector work is invisible. Historical total (2019–present) ≠ annual turnover. Contract value may understate turnover if the company marks up materials or has private revenue. No clean alternative exists - this proxy is the most reliable available signal short of audited accounts.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
