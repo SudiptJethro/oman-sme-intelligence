@@ -37,7 +37,7 @@ flowchart LR
     OIA[OIA Mandatory List<br/>384 activities]
     O[Riyada · MoCI<br/>MSX · JSRS]
   end
-  TB --> C[Browser-console exporters<br/>full history, run in DevTools]
+  TB --> C[Browser export<br/>full history]
   TB & OIA & O --> S[Python scrapers<br/>GitHub Actions]
   C & S --> P[pipeline/process_data.py<br/>match vendors ↔ awards<br/>turnover proxy · OIA match]
   P --> E[pipeline/enrich_sectors.py<br/>Vision 2040 sector]
@@ -48,7 +48,7 @@ flowchart LR
   W --> UI[Dashboard<br/>filters · pipeline · CSV]
 ```
 
-1. **Collect.** The full Tender Board history (about 20,000 vendors and 20,000 awarded tenders) was exported with two JavaScript scripts run in the Chrome DevTools Console on the Tender Board's public report pages. Running inside the page reuses its session and its own pagination, which worked more reliably than scraping from outside. The scripts save progress so they can resume, and they download JSON files for the Python pipeline. How to run them is in **[browser_console/README.md](browser_console/README.md)**. Python scrapers, run from GitHub Actions, add the OIA Mandatory List PDF and supplementary directories (Riyada, Ministry of Commerce, the MSX Growth Market, JSRS public search).
+1. **Collect.** The full Tender Board history (about 20,000 vendors and 20,000 awarded tenders) was exported from the Tender Board's public report pages in a browser session, using a short script run from the Chrome DevTools Console. It paged through each report at a gentle pace, saved progress so it could resume, and downloaded JSON files for the Python pipeline. The export scripts aren't published; the method and the file format the pipeline expects are described in **[docs/data-collection.md](docs/data-collection.md)**. Python scrapers, run from GitHub Actions, add the OIA Mandatory List PDF and supplementary directories (Riyada, Ministry of Commerce, the MSX Growth Market, JSRS public search).
 2. **Estimate size.** Total OMR won in government contracts since 2019 stands in for turnover. It's bucketed into revenue bands, with a confidence level based on the number of contracts.
 3. **Match policy lists.** Each company's registered category is matched against the OIA protected activities. Its contract buyers and name map it to a Vision 2040 sector.
 4. **Score.** A SQL view ranks qualifying companies from 0 to 100: size (35), OIA alignment (30), recent awards (20), contract frequency (15). Shortlisted companies get a Workers AI profile with a score, summary, growth signals and risk flags.
@@ -59,7 +59,6 @@ The reasoning behind the proxy, the score and its limitations is in **[docs/meth
 ## Repository
 
 ```
-browser_console/     DevTools Console scripts that exported the full Tender Board history
 scrapers/            Python source adapters (Tender Board, OIA list, Riyada, MoCI, MSX, JSRS)
 run_scrapers.py      entry point for the Python scrapers (used by GitHub Actions)
 pipeline/
@@ -69,7 +68,7 @@ pipeline/
   load_to_d1.py      bulk loader (wrangler)
 schema.sql           D1 schema and the investment_ready scoring view
 worker/index.js      Cloudflare Worker: leads, stats, tenders, CSV export, AI enrichment
-docs/                dashboard (index.html), synthetic demo data, methodology
+docs/                dashboard (index.html), synthetic demo data, methodology, data collection
 scripts/             demo-data generator
 tests/               scoring tests against the real schema in SQLite
 ```
