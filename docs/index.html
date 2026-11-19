@@ -1197,7 +1197,7 @@ function oiaCell(s) {
 function normBand(band) {
   if (!band) return 'Unknown';
   // Normalize any encoding variant of the en-dash
-  return band.replace(/[–-â€“\x93\x96-]+/g, '–');
+  return band.replace(/(?:\u2014|\u2013|\u00e2\u20ac\u201c|\x93|\x96|-)+/g, '\u2013');
 }
 
 function revBadge(s) {
