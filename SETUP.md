@@ -50,12 +50,15 @@ Run the workflow from **Actions → Oman SME Intel Scraper → Run workflow**. S
 
 ## 4. Bulk loads
 
-For the full Tender Board history, paste the two browser-console scripts in `scrapers/` (`scrape_vendors_console.js`, `scrape_tenders_console.js`) into DevTools on the Tender Board's public report pages. They page through the vendor registry and the awarded tenders, save progress so they can resume, and download `vendors_full.json` and `tenders_full.json`. Move both into `data/`, then run:
+The full Tender Board history was collected in the browser, not by the Python scrapers. Open each public report page in Chrome, paste the matching script from `browser_console/` into the DevTools Console, and let it page through the results. `scrape_vendors_console.js` downloads `vendors_full.json` and `scrape_tenders_console.js` downloads `tenders_full.json`. Both save progress so they can resume after a session timeout. Step-by-step instructions are in [browser_console/README.md](browser_console/README.md).
+
+Move both files into `data/`, then run from the repo root:
 
 ```bash
-python process_data.py      # match vendors to awards, revenue proxy, OIA alignment
-python enrich_sectors.py    # Vision 2040 sector and pillar
-python load_to_d1.py        # bulk insert via wrangler
+python pipeline/process_data.py      # match vendors to awards, revenue proxy, OIA alignment
+python pipeline/enrich_sectors.py    # Vision 2040 sector and pillar
+python pipeline/generate_oia_sql.py  # OIA protected codes and ICV flags
+python pipeline/load_to_d1.py        # bulk insert via wrangler
 ```
 
 Scraped data is written to `data/`, which is git-ignored.
