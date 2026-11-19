@@ -4,8 +4,8 @@ oia_matched_codes for all companies that have tender award data.
 
 Source: data/tenders_full.json (category_grade field)
 Output: data/updates_sector_from_tenders.sql
-Run:    python enrich_sectors.py
-Load:   cd worker && wrangler d1 execute oman-sme-intel --file=../data/updates_sector_from_tenders.sql --remote
+Run:    python pipeline/enrich_sectors.py
+Load:   wrangler d1 execute oman-sme-intel --file=data/updates_sector_from_tenders.sql --remote
 """
 
 import json
@@ -13,7 +13,7 @@ import re
 from collections import Counter, defaultdict
 from pathlib import Path
 
-DATA = Path("data")
+DATA = Path(__file__).resolve().parent.parent / "data"  # repo-root data/ folder
 
 # category_grade field examples:
 #   "Supply[Excellent,First,Second,Third,Fourth]"
@@ -308,4 +308,4 @@ with open(out_path, "w", encoding="utf-8") as f:
 
 print(f"\nWrote {len(updates)} UPDATE statements -> {out_path}")
 print(f"Load with:")
-print(f"  cd worker && wrangler d1 execute oman-sme-intel --file=../data/updates_sector_from_tenders.sql --remote")
+print(f"  wrangler d1 execute oman-sme-intel --file=data/updates_sector_from_tenders.sql --remote")
