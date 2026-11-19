@@ -50,9 +50,9 @@ Run the workflow from **Actions → Oman SME Intel Scraper → Run workflow**. S
 
 ## 4. Bulk loads
 
-The full Tender Board history was collected in the browser, not by the Python scrapers. Open each public report page in Chrome, paste the matching script from `browser_console/` into the DevTools Console, and let it page through the results. `scrape_vendors_console.js` downloads `vendors_full.json` and `scrape_tenders_console.js` downloads `tenders_full.json`. Both save progress so they can resume after a session timeout. Step-by-step instructions are in [browser_console/README.md](browser_console/README.md).
+The full Tender Board history was exported in the browser, not by the Python scrapers. The export scripts aren't published. [docs/data-collection.md](docs/data-collection.md) describes the method and the format of the two input files, `vendors_full.json` and `tenders_full.json`.
 
-Move both files into `data/`, then run from the repo root:
+Put both files in `data/`, then run from the repo root:
 
 ```bash
 python pipeline/process_data.py      # match vendors to awards, revenue proxy, OIA alignment
