@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Environment / secrets
+.env
+.env.*
+*.local
+
+# Playwright
+playwright-report/
+test-results/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Wrangler
+.wrangler/
+worker/node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.gstack/
+
+.dev.vars*
+!.dev.vars.example
+!.env.example
+
+# Scraped data and saved portal pages (never commit: contains business contact details)
+data/
+*.csv
+*_files/
+Registered Companies*
+Report Of Awarded Tenders*
+
+# Local assistant/tool settings
+.claude/
+CLAUDE.md
+.pytest_cache/
