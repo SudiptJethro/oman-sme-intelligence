@@ -33,7 +33,7 @@ The one reliable public signal is the **Tender Board**. Every government contrac
 | 5M–20M | OMR 5,000,000 to 20,000,000 |
 | Over 20M | above OMR 20,000,000 |
 
-When a vendor appears in the registry but its award values are missing, `process_data.py` estimates its size from contract count multiplied by a typical contract size for its Tender Board category (for example, OMR 250,000 for construction and OMR 60,000 for services).
+When a vendor appears in the registry but its award values are missing, `pipeline/process_data.py` estimates its size from contract count multiplied by a typical contract size for its Tender Board category (for example, OMR 250,000 for construction and OMR 60,000 for services).
 
 ## Investment-ready score (0–100)
 
@@ -50,7 +50,7 @@ The `investment_ready` view in `schema.sql` scores every company whose registrat
 
 ## Sector mapping and AI enrichment
 
-`enrich_sectors.py` assigns each company a Vision 2040 sector and pillar. It uses the buyers it has won contracts from (for example, Ministry of Health contracts suggest Healthcare) and keywords in its name. For shortlisted companies, the Worker's `/enrich` routes ask Workers AI (Llama 3.1 8B) for a 1–10 investment score, a short summary, growth signals and risk flags. The AI score supports the analyst's judgement and is kept separate from the rule-based score above.
+`pipeline/enrich_sectors.py` assigns each company a Vision 2040 sector and pillar. It uses the buyers it has won contracts from (for example, Ministry of Health contracts suggest Healthcare) and keywords in its name. For shortlisted companies, the Worker's `/enrich` routes ask Workers AI (Llama 3.1 8B) for a 1–10 investment score, a short summary, growth signals and risk flags. The AI score supports the analyst's judgement and is kept separate from the rule-based score above.
 
 ## Limitations
 
