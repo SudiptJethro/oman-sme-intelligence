@@ -50,3 +50,7 @@ Report Of Awarded Tenders*
 .claude/
 CLAUDE.md
 .pytest_cache/
+
+# Browser export scripts are kept private
+browser_console/
+*_console.js
