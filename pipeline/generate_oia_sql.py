@@ -4,8 +4,8 @@ Generate SQL for:
   2. oman_smes updates - oia_matched_codes, oia_match_count, oia_code_match, icv_certified
 
 Run:
-  python generate_oia_sql.py
-  python generate_oia_sql.py --execute
+  python pipeline/generate_oia_sql.py
+  python pipeline/generate_oia_sql.py --execute
 """
 
 import json
@@ -14,7 +14,7 @@ import shutil
 import sys
 from pathlib import Path
 
-DATA = Path("data")
+DATA = Path(__file__).resolve().parent.parent / "data"  # repo-root data/ folder
 DB_NAME = "oman-sme-intel"
 
 # ── OIA Mandatory List v4.0 (Dec 2025) - 34 segments ─────────────────────────
@@ -142,7 +142,7 @@ def generate_smes_oia_sql():
     oia_match_count, oia_code_match, icv_certified."""
     smes_path = DATA / "oman_smes_processed.json"
     if not smes_path.exists():
-        print("  ERROR: data/oman_smes_processed.json not found - run process_data.py first")
+        print("  ERROR: data/oman_smes_processed.json not found - run pipeline/process_data.py first")
         return ""
 
     smes = json.loads(smes_path.read_text("utf-8"))
@@ -198,7 +198,7 @@ def run_wrangler(sql_file):
     wrangler_cmd = shutil.which("wrangler") or "wrangler"
     cmd = f'"{wrangler_cmd}" d1 execute {DB_NAME} --file="{sql_file}" --remote'
     result = subprocess.run(
-        cmd, shell=True,
+        cmd, shell=True, cwd=DATA.parent,  # run from repo root so wrangler finds wrangler.jsonc
         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
         encoding="utf-8", errors="replace",
     )
@@ -234,7 +234,7 @@ def main():
             print("\n--- Executing SME OIA/ICV updates ---")
             run_wrangler(smes_file)
     else:
-        print("\nNext: python generate_oia_sql.py --execute")
+        print("\nNext: python pipeline/generate_oia_sql.py --execute")
 
 
 if __name__ == "__main__":
