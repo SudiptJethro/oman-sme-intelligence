@@ -11,7 +11,7 @@ Outputs:
   data/pipeline_summary.json        - stats + top investment candidates
 
 Run:
-  python process_data.py
+  python pipeline/process_data.py
 """
 
 import json
@@ -21,7 +21,7 @@ from collections import defaultdict
 from datetime import datetime, date
 from pathlib import Path
 
-DATA = Path("data")
+DATA = Path(__file__).resolve().parent.parent / "data"  # repo-root data/ folder
 
 # OIA-aligned categories from Tender Board registry
 OIA_CATEGORIES = {
