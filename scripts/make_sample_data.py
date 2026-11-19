@@ -3,7 +3,7 @@ Generate the synthetic dataset used by the dashboard's demo mode (docs/sample-da
 
 Every company, registration number and tender in the output is invented. The
 fields follow the D1 schema in schema.sql, and the revenue band, confidence and
-investment-ready score are derived with the same rules as process_data.py and
+investment-ready score are derived with the same rules as pipeline/process_data.py and
 the `investment_ready` view, so the demo behaves like the real pipeline.
 
 Run:  python scripts/make_sample_data.py
@@ -17,7 +17,7 @@ SEED = 2040
 TODAY = date(2026, 11, 19)
 OUT = Path(__file__).resolve().parents[1] / "docs" / "sample-data.js"
 
-# Typical contract size by Tender Board category (same table as process_data.py)
+# Typical contract size by Tender Board category (same table as pipeline/process_data.py)
 CATEGORIES = {
     "Construction and Maintenance": 250_000,
     "Electromechanical and Telecommunications Contracting and Maintenance": 300_000,
