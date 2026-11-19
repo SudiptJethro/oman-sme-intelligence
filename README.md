@@ -94,7 +94,7 @@ python -m http.server -d docs 8000     # dashboard in demo mode at http://localh
 
 [Apache License 2.0](LICENSE). You're free to use, modify and build on this code, including commercially. Keep the copyright and [NOTICE](NOTICE) file, and state any changes you make.
 
-**Using it?** I'd love to hear about it. Please [open an issue](../../issues/new?title=I%27m%20using%20this&body=What%20are%20you%20using%20it%20for%3F) or message me on [LinkedIn](https://www.linkedin.com/in/sudipt-jethro-4ab707241). This is a request, not a condition of the license.
+**Using it?** I'd love to hear about it. Please [open an issue](../../issues/new?title=I%27m%20using%20this&body=What%20are%20you%20using%20it%20for%3F) or message me on [LinkedIn](https://www.linkedin.com/in/sudiptjethro). This is a request, not a condition of the license.
 
 ---
 
