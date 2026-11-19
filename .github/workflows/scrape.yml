@@ -14,6 +14,7 @@ on:
         options:
           - all
           - oia_list
+          - tender_vendor_registry
           - tender_board
           - tender_awards
           - riyada
