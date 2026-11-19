@@ -2,8 +2,8 @@
 Load vendor + tender data into Cloudflare D1.
 
 Usage:
-  python load_to_d1.py              # generates SQL files only
-  python load_to_d1.py --execute    # generates + runs wrangler d1 execute
+  python pipeline/load_to_d1.py              # generates SQL files only
+  python pipeline/load_to_d1.py --execute    # generates + runs wrangler d1 execute
 
 Requirements:
   - wrangler installed + logged in (npm install -g wrangler && wrangler login)
@@ -20,8 +20,8 @@ import sys
 from datetime import datetime, date
 from pathlib import Path
 
-DATA     = Path("data")
-OUT      = Path("data")
+DATA = Path(__file__).resolve().parent.parent / "data"  # repo-root data/ folder
+OUT      = DATA
 DB_NAME  = "oman-sme-intel"
 BATCH    = 50   # rows per INSERT statement (D1 handles ~100 safely)
 
@@ -247,7 +247,7 @@ def run_wrangler(sql_file):
     wrangler_cmd = shutil.which("wrangler") or "wrangler"
     cmd = f'"{wrangler_cmd}" d1 execute {DB_NAME} --file="{sql_file}" --remote'
     result = subprocess.run(
-        cmd, shell=True,
+        cmd, shell=True, cwd=DATA.parent,  # run from repo root so wrangler finds wrangler.jsonc
         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
         encoding="utf-8", errors="replace",
     )
@@ -299,7 +299,7 @@ def main():
         print("  1. wrangler d1 create oman-sme-intel          # if not done yet")
         print("  2. # paste database_id into wrangler.jsonc")
         print("  3. wrangler d1 execute oman-sme-intel --file=schema.sql --remote")
-        print("  4. python load_to_d1.py --execute             # loads the data")
+        print("  4. python pipeline/load_to_d1.py --execute             # loads the data")
 
 if __name__ == "__main__":
     main()
